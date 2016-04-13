@@ -47,12 +47,12 @@ then
   while [ $i -le $end ]
   do
     printf "%d\n" $i
-    (( i += $step ))
+    (( i += step ))
   done
 else
   while [ $i -ge $end ]
   do
     printf "%d\n" $i
-    (( i += $step ))
+    (( i += step ))
   done
 fi
