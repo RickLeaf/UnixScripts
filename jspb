@@ -1,0 +1,64 @@
+#!/bin/sh
+
+# Jeff's progress bar
+# *simulates* a progress bar
+
+# better options:
+# https://github.com/Xfennec/progress
+# http://www.theiling.de/projects/bar.html
+
+if [ ! -n "$*" ]
+then
+  echo Nothing to do, exiting!
+  exit 0
+fi
+
+if [ ! -d /proc/$$ ]
+then
+  echo Missing /proc, sorry
+  exit 1
+fi
+
+sh -c "$*" &
+PID=$!
+# give the command a chance to fail immediately, if it will
+sleep 1
+
+i=1
+while [ -d /proc/$PID ]
+do
+  # simulate progress
+  # dash, e.g. does not have $RANDOM
+  ##sleep $((i % 4))
+  sleep 1
+
+  # see if our window got resized
+  cols=$(tput cols)
+  if [ $i -ge $cols ]
+  then
+    printf "\r"
+    # clear out the old progress bar and start over!
+    while [ $i -gt 1 ]
+    do
+      printf " "
+      i=$(expr $i - 1)
+    done
+    printf "\r"
+  fi
+  # making progress!
+  printf "#"
+  i=$(expr $i + 1)
+done
+
+# only clear the progress bar it if we wrote something
+if [ $i -gt 1 ]
+then
+  pacman=1
+  printf "\r"
+  while [ $pacman -lt $i ]
+  do
+    printf " "
+    pacman=$(expr $pacman + 1)
+  done
+  printf "\r"
+fi
